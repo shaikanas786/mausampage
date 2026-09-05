@@ -14,21 +14,22 @@ from ai_service import generate_weather_advice
 load_dotenv()
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "development-secret")
-GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
-TICKETMASTER_API_KEY = os.getenv("TICKETMASTER_API_KEY")
-CORS(
-    app,
-    resources={
-        r"/api/*": {
-            "origins": [
-                "http://127.0.0.1:8080",
-                "http://localhost:8080"
-            ]
-        }
-    }
+
+app.config["SECRET_KEY"] = os.getenv(
+    "SECRET_KEY",
+    "development-secret"
 )
 
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+TICKETMASTER_API_KEY = os.getenv("TICKETMASTER_API_KEY")
+
+CORS(app)
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:8080"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
 init_db()
 
 
@@ -41,7 +42,7 @@ def home():
 
 @app.route("/api/register", methods=["POST"])
 def register():
-    data = request.get_json()
+    data = request.get_json() or {}
 
     name = data.get("name")
     email = data.get("email")
@@ -58,11 +59,18 @@ def register():
 
     try:
         connection = get_connection()
+
         connection.execute("""
             INSERT INTO users
             (name, email, password, role, location)
             VALUES (?, ?, ?, ?, ?)
-        """, (name, email, hashed_password, role, location))
+        """, (
+            name,
+            email,
+            hashed_password,
+            role,
+            location
+        ))
 
         connection.commit()
         connection.close()
@@ -79,19 +87,24 @@ def register():
 
 @app.route("/api/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json() or {}
 
     email = data.get("email")
     password = data.get("password")
 
     connection = get_connection()
+
     user = connection.execute(
         "SELECT * FROM users WHERE email = ?",
         (email,)
     ).fetchone()
+
     connection.close()
 
-    if user is None or not check_password_hash(user["password"], password):
+    if user is None or not check_password_hash(
+        user["password"],
+        password
+    ):
         return jsonify({
             "error": "Invalid email or password"
         }), 401
@@ -108,28 +121,22 @@ def login():
     })
 
 
-
 @app.route("/api/weather", methods=["GET"])
 def weather():
-    city = request.args.get("city")
+    city = request.args.get("city", "").strip()
 
     if not city:
         return jsonify({
             "error": "City is required"
         }), 400
 
-    print(f"Searching for city: {city}")
-
     try:
         location = get_coordinates(city)
 
         if location is None:
-            print(f"Location not found for: {city}")
             return jsonify({
                 "error": "Location not found"
             }), 404
-
-        # ... rest of the code
 
         weather_data = get_weather(
             location["latitude"],
@@ -155,7 +162,7 @@ def weather():
 
 @app.route("/api/ai-advice", methods=["POST"])
 def ai_advice():
-    data = request.get_json()
+    data = request.get_json() or {}
 
     role = data.get("role", "general user")
     weather_data = data.get("weather_data", {})
@@ -177,30 +184,25 @@ def ai_advice():
             "error": str(error)
         }), 500
 
-def find_nearby_places(latitude, longitude, place_type):
+
+def search_places(query):
     response = requests.post(
-        "https://places.googleapis.com/v1/places:searchNearby",
+        "https://places.googleapis.com/v1/places:searchText",
         headers={
             "Content-Type": "application/json",
             "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
             "X-Goog-FieldMask": (
-                "places.displayName,places.formattedAddress,"
-                "places.rating"
+                "places.displayName,"
+                "places.formattedAddress,"
+                "places.rating,"
+                "places.primaryType,"
+                "places.googleMapsUri"
             )
         },
         json={
-            "includedTypes": [place_type],
-            "maxResultCount": 5,
-            "rankPreference": "DISTANCE",
-            "locationRestriction": {
-                "circle": {
-                    "center": {
-                        "latitude": latitude,
-                        "longitude": longitude
-                    },
-                    "radius": 5000.0
-                }
-            }
+            "textQuery": query,
+            "languageCode": "en",
+            "maxResultCount": 5
         },
         timeout=15
     )
@@ -209,9 +211,27 @@ def find_nearby_places(latitude, longitude, place_type):
 
     return [
         {
-            "name": place.get("displayName", {}).get("text", "Unknown place"),
-            "address": place.get("formattedAddress", "Address unavailable"),
-            "rating": place.get("rating")
+            "name": place.get(
+                "displayName",
+                {}
+            ).get("text", "Unknown place"),
+
+            "address": place.get(
+                "formattedAddress",
+                "Address unavailable"
+            ),
+
+            "rating": place.get("rating"),
+
+            "type": place.get(
+                "primaryType",
+                "place"
+            ),
+
+            "maps_url": place.get(
+                "googleMapsUri",
+                ""
+            )
         }
         for place in response.json().get("places", [])
     ]
@@ -222,27 +242,37 @@ def travel_places():
     city = request.args.get("city", "").strip()
 
     if not city:
-        return jsonify({"error": "Destination city is required"}), 400
+        return jsonify({
+            "error": "Destination city is required"
+        }), 400
 
     if not GOOGLE_MAPS_API_KEY:
-        return jsonify({"error": "Google Maps API key is not configured"}), 500
+        return jsonify({
+            "error": "Google Maps API key is not configured"
+        }), 500
 
     try:
         location = get_coordinates(city)
 
         if not location:
-            return jsonify({"error": "Destination not found"}), 404
+            return jsonify({
+                "error": "Destination not found"
+            }), 404
 
-        latitude = location["latitude"]
-        longitude = location["longitude"]
+        destination = location["name"]
+        country = location.get("country", "")
 
-        hotels = find_nearby_places(latitude, longitude, "hotel")
-        cultural_sites = find_nearby_places(
-            latitude,
-            longitude,
-            "tourist_attraction"
+        cultural_sites = search_places(
+            f"top tourist attractions and cultural sites in {destination}, {country}"
         )
-        transport = find_nearby_places(latitude, longitude, "bus_station")
+
+        hotels = search_places(
+            f"hotels in {destination}, {country}"
+        )
+
+        transport = search_places(
+            f"bus stations and public transport hubs in {destination}, {country}"
+        )
 
         events = []
 
@@ -251,8 +281,7 @@ def travel_places():
                 "https://app.ticketmaster.com/discovery/v2/events.json",
                 params={
                     "apikey": TICKETMASTER_API_KEY,
-                    "city": location["name"],
-                    "countryCode": "IN",
+                    "city": destination,
                     "size": 5
                 },
                 timeout=15
@@ -261,23 +290,42 @@ def travel_places():
             if event_response.ok:
                 event_data = event_response.json()
 
-                for event in event_data.get("_embedded", {}).get("events", []):
+                for event in event_data.get(
+                    "_embedded",
+                    {}
+                ).get("events", []):
+
                     venue = event.get(
                         "_embedded",
                         {}
                     ).get("venues", [{}])[0]
 
                     events.append({
-                        "name": event.get("name", "Unnamed event"),
+                        "name": event.get(
+                            "name",
+                            "Unnamed event"
+                        ),
+
                         "date": event.get(
                             "dates",
                             {}
-                        ).get("start", {}).get("localDate", "Date unavailable"),
-                        "venue": venue.get("name", "Venue unavailable")
+                        ).get(
+                            "start",
+                            {}
+                        ).get(
+                            "localDate",
+                            "Date unavailable"
+                        ),
+
+                        "venue": venue.get(
+                            "name",
+                            "Venue unavailable"
+                        )
                     })
 
         return jsonify({
-            "destination": location["name"],
+            "destination": destination,
+            "country": country,
             "hotels": hotels,
             "cultural_sites": cultural_sites,
             "transport": transport,
@@ -286,7 +334,7 @@ def travel_places():
 
     except requests.RequestException:
         return jsonify({
-            "error": "Unable to load live travel information"
+            "error": "Unable to load live travel information."
         }), 502
 
 
@@ -297,25 +345,53 @@ def travel_route():
 
     if not origin or not destination:
         return jsonify({
-            "error": "Both starting city and destination are required"
+            "error": "Both starting city and destination are required."
         }), 400
 
     if not GOOGLE_MAPS_API_KEY:
-        return jsonify({"error": "Google Maps API key is not configured"}), 500
+        return jsonify({
+            "error": "Google Maps API key is not configured."
+        }), 500
 
     try:
+        origin_location = get_coordinates(origin)
+        destination_location = get_coordinates(destination)
+
+        if not origin_location or not destination_location:
+            return jsonify({
+                "error": "Origin or destination could not be found."
+            }), 404
+
         response = requests.post(
             "https://routes.googleapis.com/directions/v2:computeRoutes",
             headers={
                 "Content-Type": "application/json",
                 "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
-                "X-Goog-FieldMask": "routes.distanceMeters,routes.duration"
+                "X-Goog-FieldMask": (
+                    "routes.distanceMeters,"
+                    "routes.duration"
+                )
             },
             json={
-                "origin": {"address": origin},
-                "destination": {"address": destination},
-                "travelMode": "DRIVE",
-                "routingPreference": "TRAFFIC_AWARE"
+                "origin": {
+                    "location": {
+                        "latLng": {
+                            "latitude": origin_location["latitude"],
+                            "longitude": origin_location["longitude"]
+                        }
+                    }
+                },
+
+                "destination": {
+                    "location": {
+                        "latLng": {
+                            "latitude": destination_location["latitude"],
+                            "longitude": destination_location["longitude"]
+                        }
+                    }
+                },
+
+                "travelMode": "DRIVE"
             },
             timeout=15
         )
@@ -325,38 +401,55 @@ def travel_route():
         routes = response.json().get("routes", [])
 
         if not routes:
-            return jsonify({"error": "No driving route found"}), 404
+            return jsonify({
+                "error": "No driving route found."
+            }), 404
 
         route = routes[0]
-        distance_km = round(route["distanceMeters"] / 1000, 1)
+
+        distance_km = round(
+            route["distanceMeters"] / 1000,
+            1
+        )
+
         duration_minutes = round(
             float(route["duration"].replace("s", "")) / 60
         )
 
         return jsonify({
+            "origin": origin_location["name"],
+            "destination": destination_location["name"],
             "distance_km": distance_km,
             "duration_minutes": duration_minutes
         })
 
     except requests.RequestException:
-        return jsonify({"error": "Unable to calculate route"}), 502
+        return jsonify({
+            "error": "Unable to calculate the driving route."
+        }), 502
+
+
 @app.route("/api/general/news", methods=["GET"])
 def general_news():
     city = request.args.get("city", "").strip()
 
     if not city:
-        return jsonify({"error": "City is required"}), 400
+        return jsonify({
+            "error": "City is required"
+        }), 400
 
     try:
         response = requests.get(
             "https://news.google.com/rss/search",
             params={
-                "q": f"{city} India",
-                "hl": "en-IN",
+                "q": city,
+                "hl": "en",
                 "gl": "IN",
                 "ceid": "IN:en"
             },
-            headers={"User-Agent": "Mausam-App/1.0"},
+            headers={
+                "User-Agent": "Mausam-App/1.0"
+            },
             timeout=15
         )
 
@@ -367,9 +460,17 @@ def general_news():
 
         for item in root.findall("./channel/item")[:5]:
             articles.append({
-                "title": item.findtext("title", "Untitled news"),
+                "title": item.findtext(
+                    "title",
+                    "Untitled news"
+                ),
+
                 "link": item.findtext("link", ""),
-                "source": item.findtext("source", "Google News")
+
+                "source": item.findtext(
+                    "source",
+                    "Google News"
+                )
             })
 
         return jsonify({
@@ -402,7 +503,9 @@ def get_community_posts():
 
     connection.close()
 
-    return jsonify([dict(post) for post in posts])
+    return jsonify([
+        dict(post) for post in posts
+    ])
 
 
 @app.route("/api/community", methods=["POST"])
@@ -447,10 +550,10 @@ def create_community_post():
     return jsonify({
         "message": "Post published successfully."
     }), 201
+
+
 @app.route("/api/users", methods=["GET"])
 def get_users():
-    # Temporary authorization: check X-User-Role header
-    # TODO: Replace with proper session/JWT-based auth for production
     role = request.headers.get("X-User-Role")
 
     if role != "admin":
@@ -474,4 +577,4 @@ def get_users():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5051)

@@ -30,14 +30,16 @@ Air quality data:
 Give practical advice based on this information.
 
 Rules:
-- Keep the response under 150 words.
-- Use simple language.
-- Mention safety precautions.
-- For farmers, discuss irrigation and crop protection.
-- For commuters, discuss travel and pollution.
-- For travelers, discuss outdoor activity and packing.
-- For fishermen, discuss sea conditions and fishing safety.
-- For general users, provide everyday weather advice and health tips.
+- Keep the answer under 55 words.
+- Use very simple English.
+- Use exactly 3 short bullet points.
+- Do not use Markdown symbols such as **, *, #, or headings.
+- Mention only the most important weather condition, packing advice, and safety tip.
+- For farmers, focus on crops and irrigation.
+- For commuters, focus on travel and pollution.
+- For travelers, focus on outdoor plans and packing.
+- For fishermen, focus on sea safety.
+- For general users, focus on daily weather and health.
 """
 
     try:

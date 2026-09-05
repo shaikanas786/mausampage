@@ -6,7 +6,9 @@ import sqlite3
 import os
 import requests
 import xml.etree.ElementTree as ET
+import time
 
+mandi_cache = {}
 from database import get_connection, init_db
 from weather_service import get_coordinates, get_weather, get_air_quality
 from ai_service import generate_weather_advice
@@ -22,7 +24,7 @@ app.config["SECRET_KEY"] = os.getenv(
 
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 TICKETMASTER_API_KEY = os.getenv("TICKETMASTER_API_KEY")
-
+DATA_GOV_API_KEY = os.getenv("DATA_GOV_API_KEY")
 CORS(app)
 @app.after_request
 def add_cors_headers(response):
@@ -428,7 +430,90 @@ def travel_route():
             "error": "Unable to calculate the driving route."
         }), 502
 
+@app.route("/api/farmer/mandi-prices", methods=["GET"])
+def mandi_prices():
+    market = request.args.get("market", "").strip()
+    commodity = request.args.get("commodity", "").strip()
 
+    if not market:
+        return jsonify({"error": "Enter a mandi or market name."}), 400
+
+    if not DATA_GOV_API_KEY:
+        return jsonify({"error": "DATA_GOV_API_KEY is missing in backend/.env"}), 500
+
+    cache_key = f"{market.lower()}-{commodity.lower()}"
+    now = time.time()
+
+    # Reuse the same result for 30 minutes. This avoids API rate-limit errors.
+    if cache_key in mandi_cache:
+        cached = mandi_cache[cache_key]
+
+        if now - cached["saved_at"] < 1800:
+            return jsonify(cached["data"])
+
+    params = {
+        "api-key": DATA_GOV_API_KEY.strip(),
+        "format": "json",
+        "limit": 20,
+        "filters[market]": market
+    }
+
+    if commodity:
+        params["filters[commodity]"] = commodity
+
+    try:
+        response = requests.get(
+            "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070",
+            params=params,
+            headers={"User-Agent": "Mausam-App/1.0"},
+            timeout=30
+        )
+
+        if response.status_code == 429:
+            return jsonify({
+                "error": "Official mandi service is temporarily busy. Wait 10–15 minutes and try once."
+            }), 429
+
+        if response.status_code != 200:
+            return jsonify({
+                "error": f"Official mandi service returned {response.status_code}. Try again later."
+            }), 502
+
+        api_data = response.json()
+        records = api_data.get("records", [])
+
+        prices = []
+
+        for record in records:
+            prices.append({
+                "market": record.get("market", "Not available"),
+                "district": record.get("district", "Not available"),
+                "state": record.get("state", "Not available"),
+                "commodity": record.get("commodity", "Not available"),
+                "variety": record.get("variety", "Not available"),
+                "arrival_date": record.get("arrival_date", "Not available"),
+                "min_price": record.get("min_price", "Not available"),
+                "max_price": record.get("max_price", "Not available"),
+                "modal_price": record.get("modal_price", "Not available")
+            })
+
+        result = {
+            "prices": prices,
+            "source": "Official AGMARKNET / data.gov.in",
+            "message": "No records were published for this mandi/crop." if not prices else ""
+        }
+
+        mandi_cache[cache_key] = {
+            "saved_at": now,
+            "data": result
+        }
+
+        return jsonify(result)
+
+    except requests.exceptions.RequestException:
+        return jsonify({
+            "error": "Could not connect to the official mandi service. Try again later."
+        }), 502
 @app.route("/api/general/news", methods=["GET"])
 def general_news():
     city = request.args.get("city", "").strip()

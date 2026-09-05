@@ -1,16 +1,10 @@
 const API_URL = "http://127.0.0.1:5051";
 
 const user = JSON.parse(localStorage.getItem("mausamUser"));
-if (user) {
-    document.body.classList.add(`${user.role}-theme`);
-}
+
 if (!user) {
     window.location.href = "index.html";
 }
-if (user.role === "general") {
-    window.location.href = "general.html";
-}
-
 
 const welcomeText = document.getElementById("welcomeText");
 const roleText = document.getElementById("roleText");
@@ -23,17 +17,22 @@ const adviceButton = document.getElementById("adviceButton");
 let latestWeatherData = null;
 let latestAirQualityData = null;
 
-welcomeText.textContent = `Welcome, ${user.name}`;
+if (user) {
+    document.body.classList.add(`${user.role}-theme`);
 
-const roleDisplay = {
-    "farmer": "🌾 Category: Farmer",
-    "commuter": "🚗 Category: Commuter",
-    "traveler": "✈️ Category: Traveler"
-};
+    welcomeText.textContent = `Welcome, ${user.name}`;
 
-roleText.textContent = roleDisplay[user.role] || `Category: ${user.role}`;
+    const roleDisplay = {
+        farmer: "🌾 Category: Farmer",
+        commuter: "🚗 Category: Commuter",
+        traveler: "✈️ Category: Traveler"
+    };
 
-cityInput.value = user.location || "";
+    roleText.textContent =
+        roleDisplay[user.role] || `Category: ${user.role}`;
+
+    cityInput.value = user.location || "";
+}
 
 logoutButton.addEventListener("click", function () {
     localStorage.removeItem("mausamUser");
@@ -41,6 +40,12 @@ logoutButton.addEventListener("click", function () {
 });
 
 searchButton.addEventListener("click", loadWeather);
+
+cityInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        loadWeather();
+    }
+});
 
 async function loadWeather() {
     const city = cityInput.value.trim();
@@ -60,7 +65,8 @@ async function loadWeather() {
         const data = await response.json();
 
         if (!response.ok) {
-            statusMessage.textContent = data.error;
+            statusMessage.textContent =
+                data.error || "Unable to find this city.";
             return;
         }
 
@@ -69,21 +75,20 @@ async function loadWeather() {
 
         displayWeather(data);
         updateRoleSpecificInfo(data);
-        
-        // Show farmer-specific sections
+
         if (user.role === "farmer") {
             document.getElementById("mandiSection").style.display = "block";
             document.getElementById("schemesSection").style.display = "block";
-            loadMandiPrices();
+
+            prepareFarmerData();
             loadSchemes();
         }
-        
-        statusMessage.textContent = "";
 
+        statusMessage.textContent = "";
 
     } catch (error) {
         statusMessage.textContent =
-            "Unable to load weather. Check whether the backend is running.";
+            "Unable to load weather. Check that the backend is running.";
     }
 }
 
@@ -128,65 +133,19 @@ function updateRoleSpecificInfo(data) {
     if (user.role === "farmer") {
         roleSectionTitle.textContent = "🌾 Farming Conditions";
         infoTitle1.textContent = "Soil & Crop Advisory";
-        const soilAdvice = current.precipitation > 5 
-            ? "High moisture. Delay irrigation." 
-            : "Moderate conditions. Regular watering recommended.";
-        infoText1.textContent = soilAdvice;
-        
+
+        infoText1.textContent =
+            current.precipitation > 5
+                ? "Rainfall is high. Delay irrigation and check field drainage."
+                : "Rainfall is low. Check soil moisture before irrigation.";
+
         infoTitle2.textContent = "Weather Impact";
-        const farmImpact = daily.precipitation_probability_max[0] > 60
-            ? "Heavy rain expected. Protect crops and delay harvesting."
-            : "Favorable conditions for outdoor farming activities.";
-        infoText2.textContent = farmImpact;
 
-    } else if (user.role === "commuter") {
-        roleSectionTitle.textContent = "🚗 Commuter Advisory";
-        infoTitle1.textContent = "Travel Conditions";
-        const travelAdvice = current.wind_speed_10m > 20
-            ? "Strong winds. Drive carefully, especially on highways."
-            : "Good visibility and calm conditions for travel.";
-        infoText1.textContent = travelAdvice;
-        
-        infoTitle2.textContent = "Health & Safety";
-        const aqi = data.air_quality.current.european_aqi || 0;
-        const healthAdvice = aqi > 100
-            ? "Poor air quality. Use masks and limit outdoor exposure."
-            : "Air quality is acceptable for outdoor activities.";
-        infoText2.textContent = healthAdvice;
-
-    } else if (user.role === "traveler") {
-        roleSectionTitle.textContent = "✈️ Travel Planning";
-        infoTitle1.textContent = "Destination Weather";
-        const travelWeather = getWeatherDescription(current.weather_code);
-        infoText1.textContent = `Current: ${travelWeather}. Temperature: ${current.temperature_2m}°C`;
-        
-        infoTitle2.textContent = "Packing Suggestions";
-        const packAdvice = current.temperature_2m < 15
-            ? "Pack warm clothing. Cold weather expected."
-            : current.temperature_2m > 30
-            ? "Light, breathable clothing recommended. Stay hydrated."
-            : "Moderate weather. Pack layers for comfort.";
-        infoText2.textContent = packAdvice;
+        infoText2.textContent =
+            daily.precipitation_probability_max[0] > 60
+                ? "Rain is likely. Protect harvested crops and postpone spraying."
+                : "No major rain risk shown. Plan field work based on local conditions.";
     }
-}
-
-function getWeatherDescription(code) {
-    const descriptions = {
-        0: "Clear sky ☀️",
-        1: "Mainly clear 🌤️",
-        2: "Partly cloudy ⛅",
-        3: "Overcast ☁️",
-        45: "Fog 🌫️",
-        48: "Depositing rime fog 🌫️",
-        51: "Light drizzle 🌦️",
-        61: "Light rain 🌧️",
-        63: "Moderate rain 🌧️",
-        65: "Heavy rain ⛈️",
-        71: "Light snowfall ❄️",
-        80: "Rain showers 🌦️",
-        95: "Thunderstorm ⚡"
-    };
-    return descriptions[code] || "Unknown weather";
 }
 
 function displayForecast(daily) {
@@ -197,6 +156,7 @@ function displayForecast(daily) {
 
     for (let i = 0; i < daily.time.length; i++) {
         const card = document.createElement("div");
+
         card.className = "forecast-card";
 
         card.innerHTML = `
@@ -211,15 +171,15 @@ function displayForecast(daily) {
     }
 }
 
-adviceButton.addEventListener("click", async function () {
+async function getAiAdvice() {
+    const adviceBox = document.getElementById("personalizedAdvice");
+
     if (!latestWeatherData || !latestAirQualityData) {
-        document.getElementById("personalizedAdvice").textContent =
-            "Search for weather first.";
+        adviceBox.textContent = "Search for weather first.";
         return;
     }
 
-    document.getElementById("personalizedAdvice").textContent =
-        "Generating AI advice...";
+    adviceBox.textContent = "Generating AI advice...";
 
     try {
         const response = await fetch(`${API_URL}/api/ai-advice`, {
@@ -237,56 +197,128 @@ adviceButton.addEventListener("click", async function () {
         const data = await response.json();
 
         if (!response.ok) {
-            document.getElementById("personalizedAdvice").textContent =
-                data.error;
+            adviceBox.textContent =
+                data.error || "Unable to generate advice.";
             return;
         }
 
-        document.getElementById("personalizedAdvice").textContent =
-            data.advice;
+        adviceBox.textContent = data.advice;
 
     } catch (error) {
-        document.getElementById("personalizedAdvice").textContent =
-            "AI service could not be reached.";
+        adviceBox.textContent = "AI service could not be reached.";
     }
-});
-
-if (cityInput.value) {
-    loadWeather();
 }
-// Farmer-specific functions
-function loadMandiPrices() {
-    const prices = {
-        wheat: 2200,
-        rice: 3100,
-        cotton: 6500,
-        maize: 1800
-    };
-    
-    document.getElementById("mandiPrices").innerHTML = `
-        🌾 Wheat: ₹${prices.wheat}/qtl<br>
-        🌾 Rice: ₹${prices.rice}/qtl<br>
-        🌾 Cotton: ₹${prices.cotton}/qtl<br>
-        🌾 Maize: ₹${prices.maize}/qtl
-    `;
-    
-    document.getElementById("nearestMandi").innerHTML = `
-        📍 Doddaballapura APMC (5km)<br>
-        📍 Bengaluru Yeshwanthpur (35km)<br>
-        ⏰ Open: 6 AM - 6 PM
-    `;
+
+adviceButton.addEventListener("click", getAiAdvice);
+
+function prepareFarmerData() {
+    document.getElementById("mandiPrices").textContent =
+        "Click Refresh Prices and enter a registered mandi name.";
+
+    document.getElementById("nearestMandi").textContent =
+        "Live prices are sourced from AGMARKNET / data.gov.in.";
+}
+
+async function loadMandiPrices() {
+    const market = prompt(
+        "Enter exact mandi / market name.\nExamples: Yeshwanthpur, Kolar, Doddaballapura"
+    );
+
+    if (!market || !market.trim()) {
+        return;
+    }
+
+    const commodity = prompt(
+        "Enter crop name (optional).\nExamples: Tomato, Wheat, Paddy, Onion"
+    );
+
+    const mandiPrices = document.getElementById("mandiPrices");
+    const nearestMandi = document.getElementById("nearestMandi");
+
+    mandiPrices.textContent = "Loading official daily prices...";
+    nearestMandi.textContent = "Checking market details...";
+
+    try {
+        const response = await fetch(
+            `${API_URL}/api/farmer/mandi-prices?market=${encodeURIComponent(market.trim())}&commodity=${encodeURIComponent((commodity || "").trim())}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error);
+        }
+
+        mandiPrices.innerHTML = "";
+
+        if (!data.prices || data.prices.length === 0) {
+            mandiPrices.textContent =
+                "No official records found. Check mandi and crop spelling.";
+
+            nearestMandi.textContent =
+                "Try a registered APMC market name.";
+
+            return;
+        }
+
+        data.prices.forEach(function (price) {
+            const item = document.createElement("p");
+
+            item.style.marginBottom = "12px";
+
+            item.textContent =
+                `${price.commodity} (${price.variety || "General"}) — Modal: ₹${price.modal_price}/qtl | Range: ₹${price.min_price}–₹${price.max_price}/qtl | Date: ${price.arrival_date}`;
+
+            mandiPrices.appendChild(item);
+        });
+
+        const first = data.prices[0];
+
+        nearestMandi.textContent =
+            `Market: ${first.market}, ${first.district}, ${first.state}. Source: AGMARKNET / data.gov.in.`;
+
+    } catch (error) {
+        mandiPrices.textContent =
+            error.message || "Unable to load official mandi prices.";
+
+        nearestMandi.textContent =
+            "Check the backend and data.gov.in API key.";
+    }
 }
 
 function loadSchemes() {
     document.getElementById("activeSchemes").innerHTML = `
-        ✅ PM-KISAN: ₹6,000/year<br>
-        ✅ Kisan Credit Card: Available<br>
-        ✅ Crop Insurance Scheme: Active
+        <p><strong>PM-KISAN:</strong> Check benefits and status on <a href="https://pmkisan.gov.in/" target="_blank" rel="noopener noreferrer">PM-KISAN</a>.</p>
+        <p><strong>Crop Insurance:</strong> Check official details on <a href="https://pmfby.gov.in/" target="_blank" rel="noopener noreferrer">PMFBY</a>.</p>
+        <p><strong>Kisan Credit Card:</strong> Apply through your bank or <a href="https://www.myscheme.gov.in/" target="_blank" rel="noopener noreferrer">myScheme</a>.</p>
     `;
-    
+
     document.getElementById("subsidyStatus").innerHTML = `
-        💰 Fertilizer subsidy: Active<br>
-        💧 Irrigation subsidy: Eligible<br>
-        ⚡ Electricity subsidy: Available
+        <p>Eligibility depends on state, land records, crop, and your application.</p>
+        <p>Verify schemes on the official <a href="https://www.myscheme.gov.in/" target="_blank" rel="noopener noreferrer">myScheme portal</a>.</p>
     `;
+}
+
+function getWeatherDescription(code) {
+    const descriptions = {
+        0: "Clear sky ☀️",
+        1: "Mainly clear 🌤️",
+        2: "Partly cloudy ⛅",
+        3: "Overcast ☁️",
+        45: "Fog 🌫️",
+        48: "Fog 🌫️",
+        51: "Light drizzle 🌦️",
+        61: "Light rain 🌧️",
+        63: "Moderate rain 🌧️",
+        65: "Heavy rain ⛈️",
+        71: "Light snowfall ❄️",
+        80: "Rain showers 🌦️",
+        95: "Thunderstorm ⚡"
+    };
+
+    return descriptions[code] || "Weather unavailable";
+}
+
+if (cityInput.value) {
+    loadWeather();
 }

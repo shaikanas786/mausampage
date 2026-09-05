@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mausam - Register</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+
+    <div class="auth-card">
+        <h1>🌦️ Create Account</h1>
+        <p class="subtitle">Join the Mausam platform</p>
+
+        <form id="registerForm">
+            <label for="name">Full name</label>
+            <input type="text" id="name" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+
+            <label for="role">Select category</label>
+            <select id="role" required>
+                <option value="">Choose a category</option>
+                <option value="farmer">Farmer</option>
+                <option value="commuter">Commuter</option>
+                <option value="traveler">Traveler</option>
+                <option value="fisherman">Fisherman</option>
+                <option value="general">General User</option>
+            </select>
+
+            <label for="location">Location</label>
+            <input
+                type="text"
+                id="location"
+                placeholder="Example: Doddaballapura"
+                required
+            >
+
+            <button type="submit">Register</button>
+        </form>
+
+        <p id="message"></p>
+
+        <p>
+            Already registered?
+            <a href="login.html">Login</a>
+        </p>
+
+        <p>
+            <a href="index.html">Back to basic weather</a>
+        </p>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

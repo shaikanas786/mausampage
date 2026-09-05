@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mausam - Traveler Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="traveler-theme">
+
+    <header class="topbar">
+        <div>
+            <h1>✈️🌦️ Mausam - Traveler</h1>
+            <p>Plan your journey with weather insights</p>
+        </div>
+
+        <button id="logoutButton" class="secondary-button">
+            Logout
+        </button>
+    </header>
+
+    <main class="container">
+        <section class="welcome-section">
+            <h2 id="welcomeText">Welcome</h2>
+            <p id="roleText"></p>
+        </section>
+
+        <section class="search-section">
+            <input type="text" id="cityInput" placeholder="Enter destination city">
+            <button id="searchButton">Search Weather</button>
+        </section>
+
+        <p id="statusMessage"></p>
+
+        <section class="weather-grid">
+            <div class="weather-card main-weather-card">
+                <h3>🌡️ Destination Weather</h3>
+                <p class="large-temperature" id="temperature">--°C</p>
+                <p id="weatherDescription">--</p>
+                <p id="humidity">Humidity: --</p>
+                <p id="windSpeed">Wind: -- km/h</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🎒 Packing Guide</h3>
+                <p id="packingGuide">Search for weather first</p>
+                <p id="activityReadiness">Activity Score: --</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🤖 AI Travel Coach</h3>
+                <p id="aiAdvice">Get personalized travel advice</p>
+                <button id="adviceButton" style="background: white; color: #667eea; border: 2px solid #667eea; padding: 10px 20px; margin-top: 15px; width: auto;">
+                    Get AI Advice
+                </button>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2>🗺️ Smart Itinerary & Route Planner</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>📍 Suggested Route</h3>
+                    <p id="suggestedRoute">Enter destination to plan route</p>
+                </div>
+                <div class="info-card">
+                    <h3>⛅ Weather Along Route</h3>
+                    <p id="routeWeather">Loading...</p>
+                </div>
+            </div>
+            <button onclick="planRoute()" style="margin-top: 20px;">Plan My Route</button>
+        </section>
+
+        <section class="info-section">
+            <h2>🎭 Local Event & Cultural Explorer</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🎪 Upcoming Events</h3>
+                    <p id="localEvents">No events found</p>
+                </div>
+                <div class="info-card">
+                    <h3>🏛️ Cultural Sites</h3>
+                    <p id="culturalSites">Loading attractions...</p>
+                </div>
+            </div>
+            <button onclick="loadEvents()" style="margin-top: 20px;">Explore Events</button>
+        </section>
+
+        <section class="info-section">
+            <h2>🏨 Budget Accommodation & Transport Finder</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🏠 Stays Near You</h3>
+                    <p id="budgetStays">Search destination first</p>
+                </div>
+                <div class="info-card">
+                    <h3>🚌 Local Transport</h3>
+                    <p id="localTransport">Loading options...</p>
+                </div>
+            </div>
+            <button onclick="findAccommodation()" style="margin-top: 20px;">Find Stays</button>
+        </section>
+
+        <section class="forecast-section">
+            <h2>5-Day Travel Forecast</h2>
+            <div id="forecastContainer" class="forecast-grid"></div>
+        </section>
+    </main>
+
+    <script src="js/traveler.js"></script>
+</body>
+</html>

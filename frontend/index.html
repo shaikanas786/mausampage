@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mausam - Weather</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="topbar">
+        <div>
+            <h1>🌦️ Mausam</h1>
+            <p>Weather information for everyone</p>
+        </div>
+
+        <div>
+            <a href="login.html" style="color: white; margin-right: 15px;">Login</a>
+            <a href="register.html" style="color: white;">Register</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="welcome-section">
+            <h2>Check weather without logging in</h2>
+            <p>Search any city to view current weather, air quality, and a five-day forecast.</p>
+        </section>
+
+        <section class="search-section">
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter city name, for example Bengaluru"
+            >
+            <button id="searchButton">Search Weather</button>
+        </section>
+
+        <p id="statusMessage"></p>
+
+        <section id="weatherResults" style="display: none;">
+            <p id="locationName" style="color: white; font-weight: bold; margin-bottom: 15px;"></p>
+
+            <section class="weather-grid">
+                <div class="weather-card main-weather-card">
+                    <h3>🌡️ Current Weather</h3>
+                    <p class="large-temperature" id="temperature">--°C</p>
+                    <p id="weatherDescription">--</p>
+                    <p id="humidity">Humidity: --</p>
+                    <p id="windSpeed">Wind: -- km/h</p>
+                </div>
+
+                <div class="weather-card">
+                    <h3>💨 Air Quality</h3>
+                    <p class="large-number" id="aqi">--</p>
+                    <p id="pm25">PM2.5: -- μg/m³</p>
+                    <p id="pm10">PM10: -- μg/m³</p>
+                </div>
+
+                <div class="weather-card">
+                    <h3>✨ Personalized Features</h3>
+                    <p>Login or register for weather recommendations based on your role: farmer, commuter, traveller, fisherman, or general user.</p>
+                    <a href="login.html" style="display: inline-block; margin-top: 20px; color: #667eea;">
+                        Login for personalized advice
+                    </a>
+                </div>
+            </section>
+
+            <section class="forecast-section">
+                <h2>5-Day Forecast</h2>
+                <div id="forecastContainer" class="forecast-grid"></div>
+            </section>
+        </section>
+    </main>
+
+    <script src="js/public.js"></script>
+</body>
+</html>

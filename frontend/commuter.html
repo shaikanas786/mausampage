@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mausam - Commuter Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="commuter-theme">
+
+    <header class="topbar">
+        <div>
+            <h1>🚗🌦️ Mausam - Commuter</h1>
+            <p>Smart commuting with weather awareness</p>
+        </div>
+
+        <button id="logoutButton" class="secondary-button">
+            Logout
+        </button>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome-section">
+            <h2 id="welcomeText">Welcome</h2>
+            <p id="roleText"></p>
+        </section>
+
+        <section class="search-section">
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter your destination city"
+            >
+            <button id="searchButton">Check Conditions</button>
+        </section>
+
+        <p id="statusMessage"></p>
+
+        <section class="weather-grid">
+            <div class="weather-card main-weather-card">
+                <h3>🌡️ Current Conditions</h3>
+                <p class="large-temperature" id="temperature">--°C</p>
+                <p id="weatherDescription">--</p>
+                <p id="aqiDisplay">AQI: --</p>
+                <p id="transitScore">Commute Score: --</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🚌 Route Planner</h3>
+                <p id="routePlanner">
+                    Search for a destination, then plan your route.
+                </p>
+                <p id="transitDelay">Weather impact: --</p>
+
+                <button
+                    onclick="planCommuteRoute()"
+                    style="margin-top: 15px; width: auto;"
+                >
+                    Plan Route
+                </button>
+            </div>
+
+            <div class="weather-card">
+                <h3>🤖 AI Commute Assistant</h3>
+                <p id="aiAdvice">Search a location for commute advice.</p>
+
+                <button
+                    id="adviceButton"
+                    style="background: white; color: #667eea; border: 2px solid #667eea; padding: 10px 20px; margin-top: 15px; width: auto;"
+                >
+                    Get Advice
+                </button>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2>🎫 Personal Ticket / Pass Wallet</h2>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🎟️ Saved Passes</h3>
+                    <div id="activePasses">
+                        No passes saved yet.
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>📱 Quick Access</h3>
+                    <div id="quickAccess">
+                        Add a pass or ticket to view it here.
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="viewTickets()" style="margin-top: 20px;">
+                View My Wallet
+            </button>
+
+            <button onclick="addTicket()" style="margin-top: 20px;">
+                Add Pass / Ticket
+            </button>
+        </section>
+
+        <section class="info-section">
+            <h2>🚨 Emergency SOS Button</h2>
+
+            <div
+                class="info-card"
+                style="background: #fee; border-left: 4px solid #f56565;"
+            >
+                <h3>⚠️ Emergency Location</h3>
+                <p>
+                    The app will obtain your current location. It does not send
+                    an SMS until a real emergency-contact service is connected.
+                </p>
+
+                <button
+                    onclick="triggerSOS()"
+                    style="background: #f56565; color: white; margin-top: 15px;"
+                >
+                    🚨 Get Emergency Location
+                </button>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2>📰 Traffic Updates & Weather Alerts</h2>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🗞️ Traffic News</h3>
+                    <div id="trafficNews">
+                        Search for a city to load traffic-related news.
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>🌦️ Weather Alerts</h3>
+                    <div id="weatherAlerts">
+                        Search for a city to view weather alerts.
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="loadNews()" style="margin-top: 20px;">
+                Refresh Updates
+            </button>
+        </section>
+
+        <section class="info-section">
+            <h2>📢 Community Ride Board</h2>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🚗 Ride Sharing</h3>
+                    <div id="rideShare">
+                        Search for a city to view ride offers.
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>📝 Community Notices</h3>
+                    <div id="communityPosts">
+                        Search for a city to view notices.
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="loadCommunity()" style="margin-top: 20px;">
+                View Board
+            </button>
+
+            <button onclick="createRideOffer()" style="margin-top: 20px;">
+                Post Ride Offer
+            </button>
+
+            <button onclick="createNotice()" style="margin-top: 20px;">
+                Add Community Notice
+            </button>
+        </section>
+
+        <section class="forecast-section">
+            <h2>5-Day Commute Forecast</h2>
+            <div id="forecastContainer" class="forecast-grid"></div>
+        </section>
+
+    </main>
+
+    <script src="js/commuter.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+Replace the complete `frontend/general.html` file with this:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mausam - General Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="general-theme">
+
+    <header class="topbar">
+        <div>
+            <h1>🌦️ Mausam - General</h1>
+            <p>Your daily weather companion</p>
+        </div>
+
+        <button id="logoutButton" class="secondary-button">
+            Logout
+        </button>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome-section">
+            <h2 id="welcomeText">Welcome</h2>
+            <p id="roleText"></p>
+        </section>
+
+        <section class="search-section">
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter any city name"
+            >
+            <button id="searchButton">Search Weather</button>
+        </section>
+
+        <p id="statusMessage"></p>
+
+        <section class="weather-grid">
+            <div class="weather-card main-weather-card">
+                <h3>🌡️ Current Weather</h3>
+                <p class="large-temperature" id="temperature">--°C</p>
+                <p id="weatherDescription">--</p>
+                <p id="humidity">Humidity: --</p>
+                <p id="windSpeed">Wind: -- km/h</p>
+                <p id="feelsLike">Feels Like: --°C</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>💨 Air Quality Index</h3>
+                <p class="large-number" id="aqi">--</p>
+                <p id="aqiDescription">AQI: --</p>
+                <p id="pm25">PM2.5: -- μg/m³</p>
+                <p id="pm10">PM10: -- μg/m³</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🌅 Today's Highlights</h3>
+                <p id="sunrise">Sunrise: --</p>
+                <p id="sunset">Sunset: --</p>
+                <p id="uvIndex">UV Index: --</p>
+                <p id="visibility">Visibility: -- km</p>
+            </div>
+        </section>
+
+        <section class="weather-grid" style="margin-top: 20px;">
+            <div class="weather-card">
+                <h3>🌧️ Precipitation</h3>
+                <p id="precipitation">Current: -- mm</p>
+                <p id="rainChance">Rain Chance: --%</p>
+                <p id="cloudCover">Cloud Cover: --%</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🧭 Wind Details</h3>
+                <p id="windDirection">Direction: --</p>
+                <p id="windGusts">Wind Gusts: -- km/h</p>
+                <p id="pressure">Pressure: -- hPa</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🤖 AI Weather Assistant</h3>
+                <p id="aiAdvice">
+                    Search for a location to get personalized weather insights.
+                </p>
+
+                <button
+                    id="adviceButton"
+                    style="background: white; color: #667eea; border: 2px solid #667eea; padding: 10px 20px; margin-top: 15px; width: auto;"
+                >
+                    Get AI Advice
+                </button>
+            </div>
+        </section>
+
+        <section class="forecast-section">
+            <h2>5-Day Forecast</h2>
+            <div id="forecastContainer" class="forecast-grid"></div>
+        </section>
+
+        <section class="info-section">
+            <h2>📊 Weather Summary</h2>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🌤️ Overall Conditions</h3>
+                    <p id="summaryConditions">
+                        Search for a city to see weather summary.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>💡 Daily Recommendations</h3>
+                    <p id="summaryRecommendations">
+                        Get personalized advice based on current weather.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2>🚨 Emergency SOS Button</h2>
+
+            <div
+                class="info-card"
+                style="background: #fee; border-left: 4px solid #f56565;"
+            >
+                <h3>⚠️ Emergency Alert</h3>
+                <p>
+                    Press the SOS button to send your location to emergency contacts.
+                </p>
+
+                <button
+                    onclick="triggerSOS()"
+                    style="background: #f56565; color: white; margin-top: 15px; width: auto; padding: 15px 30px;"
+                >
+                    🚨 SOS - Send Alert
+                </button>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h2>📰 Daily Regional News & Bulletins</h2>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🗞️ Local News</h3>
+                    <div id="localNews">
+                        Search for a city to load local news.
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>🌦️ Weather Bulletins</h3>
+                    <div id="weatherBulletins">
+                        Search for a city to see weather alerts.
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="loadNews()" style="margin-top: 20px;">
+                Refresh News
+            </button>
+        </section>
+
+        <section class="info-section">
+            <h2>📢 Community Marketplace / Noticeboard</h2>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🛒 Buy / Sell</h3>
+                    <div id="marketplace">
+                        Search for a city to view listings.
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>📝 Notices</h3>
+                    <div id="notices">
+                        Search for a city to view notices.
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="loadCommunity()" style="margin-top: 20px;">
+                View Board
+            </button>
+
+            <button
+                onclick="createCommunityPost('listing')"
+                style="margin-top: 20px;"
+            >
+                Add Buy / Sell Post
+            </button>
+
+            <button
+                onclick="createCommunityPost('notice')"
+                style="margin-top: 20px;"
+            >
+                Add Notice
+            </button>
+        </section>
+
+    </main>
+
+    <script src="js/general.js"></script>
+</body>
+</html>
+```

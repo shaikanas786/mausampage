@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mausam Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="farmer-theme">
+
+    <header class="topbar">
+        <div>
+            <h1>🌦️ Mausam</h1>
+            <p>Personalized weather dashboard</p>
+        </div>
+
+        <button id="logoutButton" class="secondary-button">
+            Logout
+        </button>
+    </header>
+
+    <main class="container">
+        <section class="welcome-section">
+            <h2 id="welcomeText">Welcome</h2>
+            <p id="roleText"></p>
+        </section>
+
+        <section class="search-section">
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter city name"
+            >
+            <button id="searchButton">Search Weather</button>
+        </section>
+
+        <p id="statusMessage"></p>
+
+        <section class="weather-grid">
+            <div class="weather-card main-weather-card">
+                <h3>🌡️ Current Weather</h3>
+                <p class="large-temperature" id="temperature">--°C</p>
+                <p id="weatherDescription">Weather information</p>
+                <p id="humidity">Humidity: --</p>
+                <p id="windSpeed">Wind: -- km/h</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>💨 Air Quality</h3>
+                <p class="large-number" id="aqi">--</p>
+                <p id="pm25">PM2.5: --</p>
+                <p id="pm10">PM10: --</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🤖 AI Assistant</h3>
+                <p id="aiAdvice">
+                    Search for a location to receive advice.
+                </p>
+                <button id="adviceButton" style="background: white; color: #667eea; border: 2px solid #667eea; padding: 10px 20px; margin-top: 15px; width: auto;">
+                    Get AI Advice
+                </button>
+            </div>
+        </section>
+
+        <section class="forecast-section">
+            <h2>5-Day Forecast</h2>
+            <div id="forecastContainer" class="forecast-grid"></div>
+        </section>
+
+        <section class="info-section" id="roleSpecificSection">
+            <h2 id="roleSectionTitle">Role-Specific Information</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3 id="infoTitle1">Information 1</h3>
+                    <p id="infoText1">Details will appear here after searching for weather.</p>
+                </div>
+                <div class="info-card">
+                    <h3 id="infoTitle2">Information 2</h3>
+                    <p id="infoText2">More details will appear here.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="advice-section">
+            <h2>Personalized Advice</h2>
+            <div class="advice-box">
+                <p id="personalizedAdvice">Click "Get AI Advice" to receive personalized recommendations based on your role and current weather conditions.</p>
+            </div>
+        </section>
+
+        <!-- Farmer-Specific Sections -->
+        <section class="info-section" id="mandiSection" style="display: none;">
+            <h2>🏪 Market Yard (Mandi) Live Prices</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🌾 Crop Prices Today</h3>
+                    <p id="mandiPrices">Loading prices...</p>
+                </div>
+                <div class="info-card">
+                    <h3>📍 Nearest Mandi</h3>
+                    <p id="nearestMandi">Detecting location...</p>
+                </div>
+            </div>
+            <button onclick="loadMandiPrices()" style="margin-top: 20px;">Refresh Prices</button>
+        </section>
+
+        <section class="info-section" id="schemesSection" style="display: none;">
+            <h2>📋 Government Schemes & Subsidies</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🌱 Active Schemes</h3>
+                    <p id="activeSchemes">Loading schemes...</p>
+                </div>
+                <div class="info-card">
+                    <h3>💰 Subsidy Status</h3>
+                    <p id="subsidyStatus">Check eligibility...</p>
+                </div>
+            </div>
+            <button onclick="loadSchemes()" style="margin-top: 20px;">View All Schemes</button>
+        </section>
+
+        <!-- Farmer-Specific Sections -->
+<section class="info-section" id="mandiSection" style="display: none;">
+    <h2>🏪 Market Yard (Mandi) Live Prices</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h3>🌾 Crop Prices Today</h3>
+            <p id="mandiPrices">Loading prices...</p>
+        </div>
+        <div class="info-card">
+            <h3>📍 Nearest Mandi</h3>
+            <p id="nearestMandi">Detecting location...</p>
+        </div>
+    </div>
+    <button onclick="loadMandiPrices()" style="margin-top: 20px;">Refresh Prices</button>
+</section>
+
+<section class="info-section" id="schemesSection" style="display: none;">
+    <h2>📋 Government Schemes & Subsidies</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h3>🌱 Active Schemes</h3>
+            <p id="activeSchemes">Loading schemes...</p>
+        </div>
+        <div class="info-card">
+            <h3>💰 Subsidy Status</h3>
+            <p id="subsidyStatus">Check eligibility...</p>
+        </div>
+    </div>
+    <button onclick="loadSchemes()" style="margin-top: 20px;">View All Schemes</button>
+</section>
+
+    </main>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

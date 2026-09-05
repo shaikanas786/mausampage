@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mausam - Fisherman Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+    body.fisherman-theme {
+        background: #fff5f5 !important;
+    }
+
+    body.fisherman-theme .topbar {
+        background: linear-gradient(135deg, #991b1b, #ef4444) !important;
+    }
+
+    body.fisherman-theme button,
+    body.fisherman-theme .forecast-card {
+        background: linear-gradient(135deg, #b91c1c, #f87171) !important;
+    }
+
+    body.fisherman-theme .weather-card,
+    body.fisherman-theme .welcome-section,
+    body.fisherman-theme .forecast-section,
+    body.fisherman-theme .info-section {
+        background: #ffffff !important;
+        border: 1px solid #fecaca !important;
+    }
+
+    body.fisherman-theme .weather-card h3,
+    body.fisherman-theme .info-section h2,
+    body.fisherman-theme .welcome-section h2 {
+        color: #b91c1c !important;
+    }
+
+    body.fisherman-theme .info-card {
+        background: #fffafa !important;
+        border-left: 4px solid #dc2626 !important;
+    }
+
+    body.fisherman-theme .large-temperature,
+    body.fisherman-theme .large-number {
+        color: #dc2626 !important;
+    }
+</style>
+</head>
+<body class="fisherman-theme">
+
+    <header class="topbar">
+        <div>
+            <h1>🌊🌦️ Mausam - Fisherman</h1>
+            <p>Marine weather and fishing conditions</p>
+        </div>
+
+        <button id="logoutButton" class="secondary-button">
+            Logout
+        </button>
+    </header>
+
+    <main class="container">
+        <section class="welcome-section">
+            <h2 id="welcomeText">Welcome</h2>
+            <p id="roleText"></p>
+        </section>
+
+        <section class="search-section">
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter coastal location (e.g., Mangalore, Kochi)"
+            >
+            <button id="searchButton">Search Conditions</button>
+        </section>
+
+        <p id="statusMessage"></p>
+
+        <section class="weather-grid">
+            <div class="weather-card main-weather-card">
+                <h3>🌊 Current Marine Conditions</h3>
+                <p class="large-temperature" id="temperature">--°C</p>
+                <p id="weatherDescription">Weather information</p>
+                <p id="humidity">Humidity: --</p>
+                <p id="windSpeed">Wind: -- km/h</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>⚠️ Wave & Sea Conditions</h3>
+                <p class="large-number" id="waveHeight">Wave Height: -- m</p>
+                <p id="swellDirection">Swell Direction: --</p>
+                <p id="swellHeight">Swell Height: -- m</p>
+                <p id="waterTemperature">Water Temp: --°C</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🎣 Fishing Conditions</h3>
+                <p id="fishingScore">Fishing Score: --</p>
+                <p id="fishingAdvice">Get weather data first</p>
+                <p id="safetyStatus">Safety Status: --</p>
+            </div>
+        </section>
+
+        <section class="weather-grid" style="margin-top: 20px;">
+            <div class="weather-card">
+                <h3>🌬️ Wind Details</h3>
+                <p id="windDirection">Wind Direction: --</p>
+                <p id="windGusts">Wind Gusts: -- km/h</p>
+                <p id="visibility">Visibility: -- km</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🌧️ Precipitation</h3>
+                <p id="precipitation">Current: -- mm</p>
+                <p id="rainProbability">Rain Probability: --%</p>
+                <p id="cloudCover">Cloud Cover: --%</p>
+            </div>
+
+            <div class="weather-card">
+                <h3>🤖 AI Fishing Advisor</h3>
+                <p id="aiAdvice">
+                    Search for a coastal location to receive fishing advice.
+                </p>
+                <button id="adviceButton">
+                    Get AI Advice
+                </button>
+            </div>
+        </section>
+
+        <section class="forecast-section">
+            <h2>5-Day Marine Forecast</h2>
+            <div id="forecastContainer" class="forecast-grid"></div>
+        </section>
+
+        <section class="forecast-section">
+            <h2>⚠️ Safety Alerts</h2>
+            <div id="alertsContainer" class="alerts-box">
+                <p>No active alerts. Check conditions before heading out.</p>
+            </div>
+        </section>
+
+        <!-- Add before closing </main> in fisherman.html -->
+
+<section class="info-section">
+    <h2>🗺️ GPS Route & Safe Zone Tracker</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h3>📍 Current Location</h3>
+            <p id="gpsLocation">Tracking...</p>
+        </div>
+        <div class="info-card">
+            <h3>⚠️ Safe Zones</h3>
+            <p id="safeZones">Loading zones...</p>
+        </div>
+    </div>
+    <button onclick="trackGPS()" style="margin-top: 20px;">Track My Route</button>
+</section>
+
+<section class="info-section">
+    <h2>📖 Digital Logbook</h2>
+    <div class="info-grid">
+        <div class="info-card">
+            <h3>🎣 Today's Catch</h3>
+            <p id="todayCatch">No entries yet</p>
+        </div>
+        <div class="info-card">
+            <h3>📊 Weekly Summary</h3>
+            <p id="weeklyCatch">Loading...</p>
+        </div>
+    </div>
+   <button id="addLogEntryButton" type="button" style="margin-top: 20px;">
+    Add Entry
+</button>
+</section>
+
+    </main>
+
+    <script src="./js/fisherman.js"></script>
+
+<script>
+    function trackGPS() {
+        const gpsLocation = document.getElementById("gpsLocation");
+        const safeZones = document.getElementById("safeZones");
+
+        if (!navigator.geolocation) {
+            gpsLocation.textContent = "GPS is not supported in this browser.";
+            safeZones.textContent = "Safe-zone data needs GPS access.";
+            return;
+        }
+
+        gpsLocation.textContent = "Getting your location...";
+        safeZones.textContent = "Checking location...";
+
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                const latitude = position.coords.latitude.toFixed(5);
+                const longitude = position.coords.longitude.toFixed(5);
+
+                gpsLocation.innerHTML = `
+                    Latitude: ${latitude}<br>
+                    Longitude: ${longitude}<br>
+                    Accuracy: ${Math.round(position.coords.accuracy)} metres
+                `;
+
+                safeZones.innerHTML = `
+                    Location found successfully.<br>
+                    Check wind and weather alerts before going to sea.<br>
+                    Verified marine safe-zone API is not connected yet.
+                `;
+            },
+            function () {
+                gpsLocation.textContent =
+                    "Unable to get location. Allow location permission and try again.";
+
+                safeZones.textContent =
+                    "Safe-zone data cannot be checked without GPS permission.";
+            }
+        );
+    }
+
+    function addLogEntry() {
+        const catchDetails = prompt("Enter today's catch details:");
+
+        if (!catchDetails || !catchDetails.trim()) {
+            return;
+        }
+
+        const logbook =
+            JSON.parse(localStorage.getItem("fishermanLogbook")) || [];
+
+        logbook.unshift({
+            catch: catchDetails.trim(),
+            date: new Date().toLocaleDateString()
+        });
+
+        localStorage.setItem("fishermanLogbook", JSON.stringify(logbook));
+
+        loadLogbook();
+    }
+
+    function loadLogbook() {
+        const todayCatch = document.getElementById("todayCatch");
+        const weeklyCatch = document.getElementById("weeklyCatch");
+
+        const logbook =
+            JSON.parse(localStorage.getItem("fishermanLogbook")) || [];
+
+        if (logbook.length === 0) {
+            todayCatch.textContent =
+                "No entries yet. Click Add Entry to record today's catch.";
+
+            weeklyCatch.textContent =
+                "No catch records available this week.";
+
+            return;
+        }
+
+        todayCatch.innerHTML = `
+            ${logbook[0].catch}<br>
+            Date: ${logbook[0].date}
+        `;
+
+        weeklyCatch.innerHTML = `
+            Total saved entries: ${logbook.length}<br>
+            Latest catch: ${logbook[0].catch}
+        `;
+    }
+
+    loadLogbook();
+    document.getElementById("addLogEntryButton")
+    .addEventListener("click", addLogEntry);
+</script>
+</body>
+</html>

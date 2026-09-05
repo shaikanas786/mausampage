@@ -91,27 +91,65 @@ function displayWeather(data) {
     document.getElementById("windSpeed").textContent =
         `Wind: ${current.wind_speed_10m} km/h`;
 
-    const temperature = current.temperature_2m;
+  const temperature = current.temperature_2m;
+const humidity = current.relative_humidity_2m;
+const rainChance = data.weather.daily.precipitation_probability_max[0];
+const weatherCode = current.weather_code;
 
-    let packingGuide = "Light clothing, comfortable shoes, and a light jacket.";
+const packingItems = [];
+let activityScore = 90;
+let activityMessage = "Excellent for travel";
 
-    if (temperature < 15) {
-        packingGuide =
-            "Pack warm clothes, a jacket, and layered clothing.";
-    } else if (temperature > 30) {
-        packingGuide =
-            "Pack cotton clothes, sunscreen, sunglasses, and a water bottle.";
+if (temperature < 12) {
+    packingItems.push("warm jacket", "sweater", "full-length clothing");
+    activityScore -= 20;
+    activityMessage = "Cold conditions";
+} else if (temperature < 20) {
+    packingItems.push("light jacket", "comfortable layered clothing");
+    activityScore -= 10;
+    activityMessage = "Cool conditions";
+} else if (temperature >= 28) {
+    packingItems.push(
+        "light cotton clothing",
+        "sunscreen",
+        "sunglasses",
+        "water bottle"
+    );
+
+    if (humidity >= 75) {
+        packingItems.push("breathable clothing");
+        activityScore -= 10;
+        activityMessage = "Warm and humid conditions";
     }
+} else {
+    packingItems.push("comfortable clothing", "walking shoes");
+}
 
-    document.getElementById("packingGuide").textContent = packingGuide;
+if (rainChance >= 40 || weatherCode >= 51) {
+    packingItems.push("umbrella or raincoat");
+    activityScore -= 15;
+    activityMessage = "Rain may affect outdoor plans";
+}
 
-    const score =
-        temperature >= 15 && temperature <= 30
-            ? "85/100 - Good for travel"
-            : "60/100 - Check weather before travel";
+if (weatherCode >= 95) {
+    packingItems.push("indoor activity backup plan");
+    activityScore -= 35;
+    activityMessage = "Thunderstorm risk";
+}
 
-    document.getElementById("activityReadiness").textContent =
-        `Activity Score: ${score}`;
+if (current.wind_speed_10m >= 25) {
+    packingItems.push("windproof layer");
+    activityScore -= 15;
+    activityMessage = "Windy travel conditions";
+}
+
+activityScore = Math.max(activityScore, 0);
+
+document.getElementById("packingGuide").textContent =
+    `Pack: ${packingItems.join(", ")}.`;
+
+document.getElementById("activityReadiness").textContent =
+    `Activity Score: ${activityScore}/100 - ${activityMessage}`;
 }
 
 function displayForecast(daily) {

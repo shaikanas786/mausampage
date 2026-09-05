@@ -7,16 +7,24 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="traveler-theme">
-
     <header class="topbar">
         <div>
             <h1>✈️🌦️ Mausam - Traveler</h1>
             <p>Plan your journey with weather insights</p>
         </div>
 
-        <button id="logoutButton" class="secondary-button">
-            Logout
-        </button>
+        <div class="language-picker">
+            <span class="language-icon">🌐</span>
+            <select id="languageSelect" class="language-select" aria-label="Choose language">
+                <option value="en">English</option>
+                <option value="te">తెలుగు</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ta">தமிழ்</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+        </div>
+
+        <button id="logoutButton" class="secondary-button">Logout</button>
     </header>
 
     <main class="container">
@@ -50,9 +58,7 @@
             <div class="weather-card">
                 <h3>🤖 AI Travel Coach</h3>
                 <p id="aiAdvice">Get personalized travel advice</p>
-                <button id="adviceButton" style="background: white; color: #667eea; border: 2px solid #667eea; padding: 10px 20px; margin-top: 15px; width: auto;">
-                    Get AI Advice
-                </button>
+                <button id="adviceButton">Get AI Advice</button>
             </div>
         </section>
 
@@ -76,11 +82,11 @@
             <div class="info-grid">
                 <div class="info-card">
                     <h3>🎪 Upcoming Events</h3>
-                    <p id="localEvents">No events found</p>
+                    <div id="localEvents">No events found</div>
                 </div>
                 <div class="info-card">
                     <h3>🏛️ Cultural Sites</h3>
-                    <p id="culturalSites">Loading attractions...</p>
+                    <div id="culturalSites">Loading attractions...</div>
                 </div>
             </div>
             <button onclick="loadEvents()" style="margin-top: 20px;">Explore Events</button>
@@ -91,11 +97,11 @@
             <div class="info-grid">
                 <div class="info-card">
                     <h3>🏠 Stays Near You</h3>
-                    <p id="budgetStays">Search destination first</p>
+                    <div id="budgetStays">Search destination first</div>
                 </div>
                 <div class="info-card">
                     <h3>🚌 Local Transport</h3>
-                    <p id="localTransport">Loading options...</p>
+                    <div id="localTransport">Loading options...</div>
                 </div>
             </div>
             <button onclick="findAccommodation()" style="margin-top: 20px;">Find Stays</button>
@@ -107,6 +113,7 @@
         </section>
     </main>
 
-    <script src="js/traveler.js?v=3"></script>
+    <script src="js/language.js"></script>
+    <script src="js/traveler.js?v=4"></script>
 </body>
 </html>

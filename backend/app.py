@@ -167,6 +167,7 @@ def ai_advice():
     data = request.get_json() or {}
 
     role = data.get("role", "general user")
+    language = data.get("language", "en")
     weather_data = data.get("weather_data", {})
     air_quality_data = data.get("air_quality_data", {})
 
@@ -174,7 +175,8 @@ def ai_advice():
         advice = generate_weather_advice(
             role,
             weather_data,
-            air_quality_data
+            air_quality_data,
+            language
         )
 
         return jsonify({

@@ -350,26 +350,15 @@ function addTicket() {
 }
 
 function triggerSOS() {
-    if (!navigator.geolocation) {
-        alert("Location access is not supported in this browser.");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        function (position) {
-            const latitude = position.coords.latitude.toFixed(5);
-            const longitude = position.coords.longitude.toFixed(5);
-
-            alert(
-                `Emergency location detected:\nLatitude: ${latitude}\nLongitude: ${longitude}\n\nA real SMS or emergency-contact service is required to send this location.`
-            );
-        },
-        function () {
-            alert(
-                "Location permission was denied. Allow location access and try again."
-            );
-        }
+    const city = activeCity || (cityInput ? cityInput.value.trim() : "") || (user ? user.location : "") || "India";
+    const emergencyCall = confirm(
+        `🚨 Emergency Assistance (India 112)\n\n` +
+        `Current Area: ${city}\n\n` +
+        `Press OK to dial National Emergency Hotline (112), or Cancel to return.`
     );
+    if (emergencyCall) {
+        window.location.href = "tel:112";
+    }
 }
 
 async function loadCommunity() {

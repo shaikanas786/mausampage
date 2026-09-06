@@ -3,46 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mausam - Farmer Dashboard</title>
+    <title>Mausam - Krishi Agromet Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="farmer-theme">
     <header class="topbar">
-        <div>
-            <h1>🌦️ Mausam</h1>
-            <p>Personalized weather dashboard</p>
+        <div class="brand-container">
+            <h1>🌦️ Mausam <span class="topbar-badge" data-i18n="Farmer">Farmer</span></h1>
+            <p data-i18n="Personalized weather dashboard">Personalized weather dashboard</p>
         </div>
 
-        <div class="language-picker">
-            <span class="language-icon">🌐</span>
-            <select id="languageSelect" class="language-select" aria-label="Choose language">
-                <option value="en">English</option>
-                <option value="te">తెలుగు</option>
-                <option value="hi">हिन्दी</option>
-                <option value="ta">தமிழ்</option>
-                <option value="kn">ಕನ್ನಡ</option>
-            </select>
-        </div>
+        <div class="topbar-nav-items">
+            <div class="language-picker">
+                <span class="language-icon">🌐</span>
+                <select id="languageSelect" class="language-select" aria-label="Choose language">
+                    <option value="en">English</option>
+                    <option value="te">తెలుగు</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="ta">தமிழ்</option>
+                    <option value="kn">ಕನ್ನಡ</option>
+                </select>
+            </div>
 
-        <button id="logoutButton" class="secondary-button">Logout</button>
+            <button id="logoutButton" class="secondary-button" data-i18n="Logout">Logout</button>
+        </div>
     </header>
 
     <main class="container">
         <section class="welcome-section">
-            <h2 id="welcomeText">Welcome</h2>
-            <p id="roleText"></p>
+            <h2 id="welcomeText" data-i18n="Welcome">Welcome</h2>
+            <p id="roleText">🌾 Category: Farmer</p>
         </section>
 
         <section class="search-section">
-            <input type="text" id="cityInput" placeholder="Enter city name">
-            <button id="searchButton">Search Weather</button>
+            <input type="text" id="cityInput" placeholder="Enter city name" data-i18n-placeholder="Enter city name">
+            <button id="searchButton" data-i18n="Search Weather">Search Weather</button>
         </section>
 
         <p id="statusMessage"></p>
 
         <section class="weather-grid">
             <div class="weather-card main-weather-card">
-                <h3>🌡️ Current Weather</h3>
+                <h3>🌡️ <span data-i18n="Current Weather">Current Weather</span></h3>
                 <p class="large-temperature" id="temperature">--°C</p>
                 <p id="weatherDescription">Weather information</p>
                 <p id="humidity">Humidity: --</p>
@@ -50,77 +52,97 @@
             </div>
 
             <div class="weather-card">
-                <h3>💨 Air Quality</h3>
+                <h3>💨 <span data-i18n="Air Quality Index">Air Quality Index</span></h3>
                 <p class="large-number" id="aqi">--</p>
                 <p id="pm25">PM2.5: --</p>
                 <p id="pm10">PM10: --</p>
             </div>
 
             <div class="weather-card">
-                <h3>🤖 AI Assistant</h3>
-                <p id="aiAdvice">Search for a location to receive advice.</p>
-                <button id="adviceButton">Get AI Advice</button>
+                <h3>🤖 <span data-i18n="AI Weather Assistant">AI Weather Assistant</span></h3>
+                <p id="aiAdvice" data-i18n="Search for a location to receive advice.">Search for a location to receive advice.</p>
+                <button id="adviceButton" data-i18n="Get AI Advice">Get AI Advice</button>
             </div>
         </section>
 
         <section class="forecast-section">
-            <h2>5-Day Forecast</h2>
+            <h2 data-i18n="3-Day Forecast">3-Day Forecast</h2>
             <div id="forecastContainer" class="forecast-grid"></div>
         </section>
 
         <section class="info-section">
-            <h2 id="roleSectionTitle">Role-Specific Information</h2>
+            <h2 id="roleSectionTitle" data-i18n="Farming Conditions">🌾 Farming Conditions</h2>
             <div class="info-grid">
                 <div class="info-card">
-                    <h3 id="infoTitle1">Information 1</h3>
+                    <h3 id="infoTitle1" data-i18n="Soil & Crop Advisory">Soil & Crop Advisory</h3>
                     <p id="infoText1">Details will appear here after searching for weather.</p>
                 </div>
                 <div class="info-card">
-                    <h3 id="infoTitle2">Information 2</h3>
+                    <h3 id="infoTitle2" data-i18n="Weather Impact">Weather Impact</h3>
                     <p id="infoText2">More details will appear here.</p>
                 </div>
             </div>
         </section>
 
         <section class="advice-section">
-            <h2>Personalized Advice</h2>
+            <h2 data-i18n="Personalized Advice">Personalized Advice</h2>
             <div class="advice-box">
                 <p id="personalizedAdvice">Click Get AI Advice for weather-based recommendations.</p>
             </div>
         </section>
 
-        <section class="info-section" id="mandiSection" style="display: none;">
-            <h2>🏪 Market Yard (Mandi) Live Prices</h2>
+        <!-- Interactive Mandi Live Prices Section -->
+        <section class="info-section" id="mandiSection">
+            <h2>🏪 <span data-i18n="Market Yard (Mandi) Live Prices">Market Yard (Mandi) Live Prices</span></h2>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">Official AGMARKNET / e-NAM Live APMC Commodity Rates</p>
+            
+            <div class="mandi-controls">
+                <span style="font-size: 13px; font-weight: 700; color: #14532d;">Quick Mandis:</span>
+                <span class="mandi-pill active" onclick="selectMandi('Bangalore')">Bengaluru APMC</span>
+                <span class="mandi-pill" onclick="selectMandi('Kolar')">Kolar Mandi</span>
+                <span class="mandi-pill" onclick="selectMandi('Doddaballapur')">Doddaballapur</span>
+                <span class="mandi-pill" onclick="selectMandi('Azadpur')">Azadpur (Delhi)</span>
+                <span class="mandi-pill" onclick="selectMandi('Vashi (Mumbai)')">Vashi (Mumbai)</span>
+                <span class="mandi-pill" onclick="selectMandi('Guntur')">Guntur APMC</span>
+                <span class="mandi-pill" onclick="selectMandi('Khanna')">Khanna (Punjab)</span>
+                <span class="mandi-pill" onclick="selectMandi('Nashik')">Nashik Mandi</span>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                <input type="text" id="mandiSearchInput" placeholder="Enter market name (e.g. Bangalore, Kolar, Azadpur)" style="flex: 1;">
+                <input type="text" id="cropSearchInput" placeholder="Crop (optional: Tomato, Onion, Wheat, Paddy)" style="flex: 1;">
+                <button onclick="fetchCustomMandiPrices()" style="width: 160px; margin-top: 0;" data-i18n="Refresh Prices">Check Rates</button>
+            </div>
+
             <div class="info-grid">
-                <div class="info-card">
-                    <h3>🌾 Crop Prices Today</h3>
-                    <div id="mandiPrices">Loading prices...</div>
-                </div>
-                <div class="info-card">
-                    <h3>📍 Nearest Mandi</h3>
-                    <p id="nearestMandi">Detecting location...</p>
+                <div class="info-card" style="grid-column: 1 / -1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 id="selectedMandiTitle" style="margin-bottom: 0;">📍 <span id="nearestMandi">Bengaluru APMC Yard</span></h3>
+                        <span id="mandiSourceBadge" class="topbar-badge" style="background: #e8f5e9; color: #166534; border-color: #a5d6a7;">AGMARKNET Verified</span>
+                    </div>
+                    <div id="mandiPrices">Loading official market prices...</div>
                 </div>
             </div>
-            <button onclick="loadMandiPrices()" style="margin-top: 20px;">Refresh Prices</button>
         </section>
 
-        <section class="info-section" id="schemesSection" style="display: none;">
-            <h2>📋 Government Schemes & Subsidies</h2>
+        <!-- Government Schemes & Subsidies Section -->
+        <section class="info-section" id="schemesSection">
+            <h2>📋 <span data-i18n="Government Schemes & Subsidies">Government Schemes & Subsidies</span></h2>
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>🌱 Active Schemes</h3>
+                    <h3>🌱 <span data-i18n="Active Schemes">Active Schemes</span></h3>
                     <div id="activeSchemes">Loading schemes...</div>
                 </div>
                 <div class="info-card">
-                    <h3>💰 Subsidy Status</h3>
+                    <h3>💰 <span data-i18n="Subsidy Status">Subsidy Status</span></h3>
                     <div id="subsidyStatus">Check eligibility...</div>
                 </div>
             </div>
-            <button onclick="loadSchemes()" style="margin-top: 20px;">View All Schemes</button>
+            <button onclick="loadSchemes()" style="margin-top: 20px;" data-i18n="View All Schemes">View All Schemes</button>
         </section>
     </main>
 
     <script src="js/language.js"></script>
-    <script src="js/dashboard.js?v=4"></script>
+    <script src="js/dashboard.js?v=6"></script>
 </body>
 </html>

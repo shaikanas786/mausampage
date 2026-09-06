@@ -3,46 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mausam - General Dashboard</title>
+    <title>Mausam - General Citizen Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="general-theme">
     <header class="topbar">
-        <div>
-            <h1>🌦️ Mausam - General</h1>
-            <p>Your daily weather companion</p>
+        <div class="brand-container">
+            <h1>🌦️ Mausam <span class="topbar-badge" data-i18n="General">General</span></h1>
+            <p data-i18n="Your daily weather companion">Your daily weather companion</p>
         </div>
 
-        <div class="language-picker">
-            <span class="language-icon">🌐</span>
-            <select id="languageSelect" class="language-select" aria-label="Choose language">
-                <option value="en">English</option>
-                <option value="te">తెలుగు</option>
-                <option value="hi">हिन्दी</option>
-                <option value="ta">தமிழ்</option>
-                <option value="kn">ಕನ್ನಡ</option>
-            </select>
-        </div>
+        <div class="topbar-nav-items">
+            <div class="language-picker">
+                <span class="language-icon">🌐</span>
+                <select id="languageSelect" class="language-select" aria-label="Choose language">
+                    <option value="en">English</option>
+                    <option value="te">తెలుగు</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="ta">தமிழ்</option>
+                    <option value="kn">ಕನ್ನಡ</option>
+                </select>
+            </div>
 
-        <button id="logoutButton" class="secondary-button">Logout</button>
+            <button id="logoutButton" class="secondary-button" data-i18n="Logout">Logout</button>
+        </div>
     </header>
 
     <main class="container">
         <section class="welcome-section">
-            <h2 id="welcomeText">Welcome</h2>
-            <p id="roleText"></p>
+            <h2 id="welcomeText" data-i18n="Welcome">Welcome</h2>
+            <p id="roleText">👤 Category: General Citizen</p>
         </section>
 
         <section class="search-section">
-            <input type="text" id="cityInput" placeholder="Enter any city name">
-            <button id="searchButton">Search Weather</button>
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter any city name"
+                data-i18n-placeholder="Enter any city name"
+            >
+            <button id="searchButton" data-i18n="Search Weather">Search Weather</button>
         </section>
 
         <p id="statusMessage"></p>
 
+        <!-- Weather Main Grid -->
         <section class="weather-grid">
             <div class="weather-card main-weather-card">
-                <h3>🌡️ Current Weather</h3>
+                <h3>🌡️ <span data-i18n="Current Weather">Current Weather</span></h3>
                 <p class="large-temperature" id="temperature">--°C</p>
                 <p id="weatherDescription">--</p>
                 <p id="humidity">Humidity: --</p>
@@ -51,106 +60,186 @@
             </div>
 
             <div class="weather-card">
-                <h3>💨 Air Quality Index</h3>
+                <h3>💨 <span data-i18n="Air Quality Index">Air Quality Index</span></h3>
                 <p class="large-number" id="aqi">--</p>
-                <p id="aqiDescription">AQI: --</p>
+                <p id="aqiDescription">CPCB National AQI</p>
                 <p id="pm25">PM2.5: -- μg/m³</p>
                 <p id="pm10">PM10: -- μg/m³</p>
             </div>
 
             <div class="weather-card">
-                <h3>🌅 Today's Highlights</h3>
-                <p id="sunrise">Sunrise: --</p>
-                <p id="sunset">Sunset: --</p>
-                <p id="uvIndex">UV Index: --</p>
-                <p id="visibility">Visibility: -- km</p>
+                <h3>🌅 <span data-i18n="Today's Highlights">Today's Highlights</span></h3>
+                <div class="highlights-grid">
+                    <div class="highlight-item">
+                        <div class="highlight-label" data-i18n="Sunrise">Sunrise</div>
+                        <div class="highlight-value" id="sunrise">--</div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-label" data-i18n="Sunset">Sunset</div>
+                        <div class="highlight-value" id="sunset">--</div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-label" data-i18n="UV Index">UV Index</div>
+                        <div class="highlight-value" id="uvIndex">--</div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-label" data-i18n="Visibility">Visibility</div>
+                        <div class="highlight-value" id="visibility">--</div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="weather-grid" style="margin-top: 20px;">
+        <!-- Weather Secondary Grid -->
+        <section class="weather-grid">
             <div class="weather-card">
-                <h3>🌧️ Precipitation</h3>
+                <h3>🌧️ <span data-i18n="Precipitation">Precipitation</span></h3>
                 <p id="precipitation">Current: -- mm</p>
                 <p id="rainChance">Rain Chance: --%</p>
                 <p id="cloudCover">Cloud Cover: --%</p>
             </div>
 
             <div class="weather-card">
-                <h3>🧭 Wind Details</h3>
+                <h3>🧭 <span data-i18n="Wind Details">Wind Details</span></h3>
                 <p id="windDirection">Direction: --</p>
                 <p id="windGusts">Wind Gusts: -- km/h</p>
                 <p id="pressure">Pressure: -- hPa</p>
             </div>
 
             <div class="weather-card">
-                <h3>🤖 AI Weather Assistant</h3>
-                <p id="aiAdvice">Search for a location to get personalized weather insights.</p>
-                <button id="adviceButton">Get AI Advice</button>
+                <h3>🤖 <span data-i18n="AI Weather Assistant">AI Weather Assistant</span></h3>
+                <p id="aiAdvice" data-i18n="Search for a location to receive advice.">
+                    Search for a location to get personalized weather insights.
+                </p>
+                <button id="adviceButton" data-i18n="Get AI Advice">Get AI Advice</button>
             </div>
         </section>
 
+        <!-- 5-Day Forecast -->
         <section class="forecast-section">
-            <h2>5-Day Forecast</h2>
+            <h2 data-i18n="5-Day Forecast">5-Day Forecast</h2>
             <div id="forecastContainer" class="forecast-grid"></div>
         </section>
 
+        <!-- Summary Section -->
         <section class="info-section">
-            <h2>📊 Weather Summary</h2>
+            <h2>📊 <span data-i18n="Weather Summary">Weather Summary</span></h2>
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>🌤️ Overall Conditions</h3>
+                    <h3>🌤️ <span data-i18n="Overall Conditions">Overall Conditions</span></h3>
                     <p id="summaryConditions">Search for a city to see weather summary.</p>
                 </div>
+
                 <div class="info-card">
-                    <h3>💡 Daily Recommendations</h3>
+                    <h3>💡 <span data-i18n="Daily Recommendations">Daily Recommendations</span></h3>
                     <p id="summaryRecommendations">Get personalized advice based on current weather.</p>
                 </div>
             </div>
         </section>
 
+        <!-- Emergency SOS Section -->
         <section class="info-section">
-            <h2>🚨 Emergency SOS Button</h2>
-            <div class="info-card" style="background: #fee; border-left: 4px solid #f56565;">
-                <h3>⚠️ Emergency Alert</h3>
-                <p>Press the SOS button to share your location with emergency contacts.</p>
-                <button onclick="triggerSOS()" style="background: #f56565; color: white; margin-top: 15px;">🚨 SOS - Send Alert</button>
+            <h2>🚨 <span data-i18n="Emergency SOS">Emergency SOS</span></h2>
+            <div class="sos-box">
+                <div class="sos-header">
+                    <span>⚠️</span>
+                    <span data-i18n="Emergency Alert">Government Emergency Alert System</span>
+                </div>
+                <p data-i18n="Press the SOS button to get your location or emergency-call option.">
+                    Press the SOS button for instant emergency dispatch (112), emergency hotlines, and location-sharing.
+                </p>
+                <button
+                    onclick="triggerSOS()"
+                    class="sos-btn"
+                    data-i18n="SOS - Send Alert"
+                >🚨 SOS - Emergency Alert</button>
             </div>
         </section>
 
+        <!-- Daily News & Bulletins -->
         <section class="info-section">
-            <h2>📰 Daily Regional News & Bulletins</h2>
+            <h2>📰 <span data-i18n="Daily Regional News & Bulletins">Daily Regional News & Bulletins</span></h2>
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>🗞️ Local News</h3>
+                    <h3>🗞️ <span data-i18n="Local News">Local News</span></h3>
                     <div id="localNews">Search for a city to load local news.</div>
                 </div>
+
                 <div class="info-card">
-                    <h3>🌦️ Weather Bulletins</h3>
+                    <h3>🌦️ <span data-i18n="Weather Bulletins">Weather Bulletins</span></h3>
                     <div id="weatherBulletins">Search for a city to see weather alerts.</div>
                 </div>
             </div>
-            <button onclick="loadNews()" style="margin-top: 20px;">Refresh News</button>
+            <button onclick="loadNews()" style="margin-top: 20px; width: 180px;" data-i18n="Refresh News">Refresh News</button>
         </section>
 
+        <!-- Community Marketplace -->
         <section class="info-section">
-            <h2>📢 Community Marketplace / Noticeboard</h2>
+            <h2>📢 <span data-i18n="Community Marketplace / Noticeboard">Community Marketplace / Noticeboard</span></h2>
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>🛒 Buy / Sell</h3>
+                    <h3>🛒 <span data-i18n="Buy / Sell">Buy / Sell</span></h3>
                     <div id="marketplace">Search for a city to view listings.</div>
                 </div>
+
                 <div class="info-card">
-                    <h3>📝 Notices</h3>
+                    <h3>📝 <span data-i18n="Notices">Notices</span></h3>
                     <div id="notices">Search for a city to view notices.</div>
                 </div>
             </div>
-            <button onclick="loadCommunity()" style="margin-top: 20px;">View Board</button>
-            <button onclick="createCommunityPost('listing')" style="margin-top: 20px;">Add Buy / Sell Post</button>
-            <button onclick="createCommunityPost('notice')" style="margin-top: 20px;">Add Notice</button>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                <button onclick="loadCommunity()" style="width: auto;" data-i18n="View Board">View Board</button>
+                <button onclick="createCommunityPost('listing')" style="width: auto;" data-i18n="Add Buy / Sell Post">Add Buy / Sell Post</button>
+                <button onclick="createCommunityPost('notice')" style="width: auto;" data-i18n="Add Notice">Add Notice</button>
+            </div>
         </section>
     </main>
 
+    <!-- Professional In-Page Emergency Modal -->
+    <div id="emergencyModal" class="emergency-modal-overlay">
+        <div class="emergency-modal">
+            <h3>🚨 Emergency Response Panel</h3>
+            <p id="sosLocationInfo" style="color: #475569; font-size: 14px; margin-bottom: 14px;">
+                Detecting current location...
+            </p>
+
+            <div class="hotline-grid">
+                <a href="tel:112" class="hotline-btn primary">
+                    <span>🚨</span> <strong>112</strong> (National All-in-One)
+                </a>
+                <a href="tel:100" class="hotline-btn">
+                    <span>👮</span> <strong>100</strong> (Police)
+                </a>
+                <a href="tel:108" class="hotline-btn">
+                    <span>🚑</span> <strong>108</strong> (Ambulance)
+                </a>
+                <a href="tel:1070" class="hotline-btn">
+                    <span>🌊</span> <strong>1070</strong> (Disaster NDMA)
+                </a>
+            </div>
+
+            <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
+                <p style="font-size: 13px; color: #475569; margin-bottom: 8px;">
+                    <strong>📱 One-Touch Distress Message:</strong>
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <a id="smsEmergencyBtn" href="sms:112?body=Emergency" class="hotline-btn" style="flex: 1; text-align: center; background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">
+                        💬 Send Distress SMS
+                    </a>
+                    <a id="whatsappEmergencyBtn" href="https://wa.me/?text=Emergency" target="_blank" class="hotline-btn" style="flex: 1; text-align: center; background: #dcfce7; color: #15803d; border-color: #86efac;">
+                        🟢 WhatsApp Alert
+                    </a>
+                </div>
+            </div>
+
+            <button onclick="closeSOSModal()" style="background: #e2e8f0; color: #0f172a; margin-top: 0;">
+                Close Emergency Window
+            </button>
+        </div>
+    </div>
+
     <script src="js/language.js"></script>
-    <script src="js/general.js?v=4"></script>
+    <script src="js/general.js?v=6"></script>
 </body>
 </html>

@@ -8,41 +8,43 @@
 </head>
 <body class="traveler-theme">
     <header class="topbar">
-        <div>
-            <h1>✈️🌦️ Mausam - Traveler</h1>
-            <p>Plan your journey with weather insights</p>
+        <div class="brand-container">
+            <h1>✈️🌦️ Mausam <span class="topbar-badge" data-i18n="Traveler">Traveler</span></h1>
+            <p data-i18n="Plan your journey with weather insights">Plan your journey with weather insights</p>
         </div>
 
-        <div class="language-picker">
-            <span class="language-icon">🌐</span>
-            <select id="languageSelect" class="language-select" aria-label="Choose language">
-                <option value="en">English</option>
-                <option value="te">తెలుగు</option>
-                <option value="hi">हिन्दी</option>
-                <option value="ta">தமிழ்</option>
-                <option value="kn">ಕನ್ನಡ</option>
-            </select>
-        </div>
+        <div class="topbar-nav-items">
+            <div class="language-picker">
+                <span class="language-icon">🌐</span>
+                <select id="languageSelect" class="language-select" aria-label="Choose language">
+                    <option value="en">English</option>
+                    <option value="te">తెలుగు</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="ta">தமிழ்</option>
+                    <option value="kn">ಕನ್ನಡ</option>
+                </select>
+            </div>
 
-        <button id="logoutButton" class="secondary-button">Logout</button>
+            <button id="logoutButton" class="secondary-button" data-i18n="Logout">Logout</button>
+        </div>
     </header>
 
     <main class="container">
         <section class="welcome-section">
-            <h2 id="welcomeText">Welcome</h2>
+            <h2 id="welcomeText" data-i18n="Welcome">Welcome</h2>
             <p id="roleText"></p>
         </section>
 
         <section class="search-section">
-            <input type="text" id="cityInput" placeholder="Enter destination city">
-            <button id="searchButton">Search Weather</button>
+            <input type="text" id="cityInput" placeholder="Enter destination city" data-i18n-placeholder="Enter destination city">
+            <button id="searchButton" data-i18n="Search Weather">Search Weather</button>
         </section>
 
         <p id="statusMessage"></p>
 
         <section class="weather-grid">
             <div class="weather-card main-weather-card">
-                <h3>🌡️ Destination Weather</h3>
+                <h3>🌡️ <span data-i18n="Destination Weather">Destination Weather</span></h3>
                 <p class="large-temperature" id="temperature">--°C</p>
                 <p id="weatherDescription">--</p>
                 <p id="humidity">Humidity: --</p>
@@ -50,13 +52,13 @@
             </div>
 
             <div class="weather-card">
-                <h3>🎒 Packing Guide</h3>
+                <h3>🎒 <span data-i18n="Packing Guide">Packing Guide</span></h3>
                 <p id="packingGuide">Search for weather first</p>
                 <p id="activityReadiness">Activity Score: --</p>
             </div>
 
             <div class="weather-card">
-                <h3>🤖 AI Travel Coach</h3>
+                <h3>🤖 <span data-i18n="AI Weather Assistant">AI Travel Coach</span></h3>
                 <p id="aiAdvice">Get personalized travel advice</p>
                 <button id="adviceButton">Get AI Advice</button>
             </div>
@@ -108,7 +110,7 @@
         </section>
 
         <section class="forecast-section">
-            <h2>5-Day Travel Forecast</h2>
+            <h2 data-i18n="5-Day Travel Forecast">5-Day Travel Forecast</h2>
             <div id="forecastContainer" class="forecast-grid"></div>
         </section>
     </main>

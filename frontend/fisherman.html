@@ -3,134 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mausam - Fisherman Dashboard</title>
+    <title>Mausam - Sagarvani Marine & Fishermen Portal</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="fisherman-theme">
     <header class="topbar">
-        <div>
-            <h1>🌊🌦️ Mausam - Fisherman</h1>
-            <p>Marine weather and fishing conditions</p>
+        <div class="brand-container">
+            <h1>🌊🌦️ Mausam <span class="topbar-badge" data-i18n="Fisherman">Fisherman</span></h1>
+            <p data-i18n="Marine weather and fishing conditions">Marine weather and fishing conditions (IMD / INCOIS)</p>
         </div>
 
-        <div class="language-picker">
-            <span class="language-icon">🌐</span>
-            <select id="languageSelect" class="language-select" aria-label="Choose language">
-                <option value="en">English</option>
-                <option value="te">తెలుగు</option>
-                <option value="hi">हिन्दी</option>
-                <option value="ta">தமிழ்</option>
-                <option value="kn">ಕನ್ನಡ</option>
-            </select>
-        </div>
+        <div class="topbar-nav-items">
+            <div class="language-picker">
+                <span class="language-icon">🌐</span>
+                <select id="languageSelect" class="language-select" aria-label="Choose language">
+                    <option value="en">English</option>
+                    <option value="te">తెలుగు</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="ta">தமிழ்</option>
+                    <option value="kn">ಕನ್ನಡ</option>
+                </select>
+            </div>
 
-        <button id="logoutButton" class="secondary-button">Logout</button>
+            <button id="logoutButton" class="secondary-button" data-i18n="Logout">Logout</button>
+        </div>
     </header>
 
     <main class="container">
         <section class="welcome-section">
-            <h2 id="welcomeText">Welcome</h2>
-            <p id="roleText"></p>
+            <h2 id="welcomeText" data-i18n="Welcome">Welcome</h2>
+            <p id="roleText">🎣 Category: Fisherman (IMD Sagarvani)</p>
         </section>
 
+        <!-- Coastal Location Search & Quick Coastal Ports -->
         <section class="search-section">
-            <input type="text" id="cityInput" placeholder="Enter coastal location">
-            <button id="searchButton">Search Conditions</button>
+            <input type="text" id="cityInput" placeholder="Enter coastal location or port (e.g. Mumbai, Chennai, Kochi, Vizag)" data-i18n-placeholder="Enter coastal location">
+            <button id="searchButton" data-i18n="Search Conditions">Search Conditions</button>
         </section>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: -10px 0 20px 0;">
+            <span style="font-size: 13px; font-weight: 700; color: #0369a1; padding: 4px 0;">Major Ports:</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Mumbai')">Mumbai</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Chennai')">Chennai</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Visakhapatnam')">Visakhapatnam</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Kochi')">Kochi</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Mangaluru')">Mangaluru</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Goa')">Goa</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Puri')">Puri</span>
+            <span class="mandi-pill" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;" onclick="quickSearchPort('Kolkata')">Kolkata</span>
+        </div>
 
         <p id="statusMessage"></p>
 
+        <!-- Main Ocean State Grid -->
         <section class="weather-grid">
             <div class="weather-card main-weather-card">
-                <h3>🌊 Current Marine Conditions</h3>
+                <h3>🌊 <span data-i18n="Current Marine Conditions">Current Marine Conditions</span></h3>
                 <p class="large-temperature" id="temperature">--°C</p>
-                <p id="weatherDescription">Weather information</p>
+                <p id="weatherDescription">Marine observations</p>
                 <p id="humidity">Humidity: --</p>
                 <p id="windSpeed">Wind: -- km/h</p>
             </div>
 
             <div class="weather-card">
-                <h3>⚠️ Wave & Sea Conditions</h3>
-                <p class="large-number" id="waveHeight">Wave Height: -- m</p>
-                <p id="swellDirection">Swell Direction: --</p>
+                <h3>⚠️ <span data-i18n="Wave & Sea Conditions">Wave & Sea Conditions</span></h3>
+                <p class="large-number" id="waveHeight" style="color: #0284c7;">-- m</p>
+                <p id="seaState">Sea State: --</p>
                 <p id="swellHeight">Swell Height: -- m</p>
+                <p id="swellDirection">Swell Direction: --</p>
                 <p id="waterTemperature">Water Temp: --°C</p>
             </div>
 
             <div class="weather-card">
-                <h3>🎣 Fishing Conditions</h3>
-                <p id="fishingScore">Fishing Score: --</p>
-                <p id="fishingAdvice">Get weather data first</p>
-                <p id="safetyStatus">Safety Status: --</p>
+                <h3>⚓ <span data-i18n="Marine Decision Support">Marine Decision Support</span></h3>
+                <div style="margin: 10px 0;">
+                    <span id="safetyBadge" class="imd-badge badge-green">SAFE: Calm Sea</span>
+                </div>
+                <p id="fishingScore" style="font-size: 16px; font-weight: 700; color: #0f172a;">
+                    Fishing Feasibility: -- / 100
+                </p>
+                <p id="fishingAdvice" style="color: #475569; font-size: 13.5px; line-height: 1.6;">
+                    Search for a coastal port to receive official INCOIS & IMD marine advisories.
+                </p>
             </div>
         </section>
 
-        <section class="weather-grid" style="margin-top: 20px;">
+        <!-- Secondary Marine Parameters -->
+        <section class="weather-grid">
             <div class="weather-card">
-                <h3>🌬️ Wind Details</h3>
-                <p id="windDirection">Wind Direction: --</p>
+                <h3>🌬️ <span data-i18n="Wind Details">Wind Details</span></h3>
+                <p id="windDirection">Direction: --</p>
                 <p id="windGusts">Wind Gusts: -- km/h</p>
+                <p id="windKnots">Wind in Knots: -- kts</p>
                 <p id="visibility">Visibility: -- km</p>
             </div>
 
             <div class="weather-card">
-                <h3>🌧️ Precipitation</h3>
+                <h3>🌧️ <span data-i18n="Precipitation">Precipitation</span></h3>
                 <p id="precipitation">Current: -- mm</p>
                 <p id="rainProbability">Rain Probability: --%</p>
                 <p id="cloudCover">Cloud Cover: --%</p>
             </div>
 
             <div class="weather-card">
-                <h3>🤖 AI Fishing Advisor</h3>
-                <p id="aiAdvice">Search for a coastal location to receive fishing advice.</p>
-                <button id="adviceButton">Get AI Advice</button>
+                <h3>🤖 <span data-i18n="AI Weather Assistant">AI Fishing Advisor</span></h3>
+                <p id="aiAdvice">Search for a coastal location to receive intelligent fishing advice.</p>
+                <button id="adviceButton" data-i18n="Get AI Advice">Get AI Advice</button>
+                <a
+                    href="https://www.incois.gov.in/MarineFisheries/PfzWebGis"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="official-pfz-button"
+                    data-i18n="Open Official INCOIS Fishing Zone Map"
+                >
+                    🗺️ Open Official INCOIS Fishing Zone Map ↗
+                </a>
             </div>
         </section>
 
+        <!-- Forecast Section -->
         <section class="forecast-section">
-            <h2>5-Day Marine Forecast</h2>
+            <h2 data-i18n="3-Day Marine Forecast">3-Day Marine Forecast</h2>
             <div id="forecastContainer" class="forecast-grid"></div>
         </section>
 
-        <section class="forecast-section">
-            <h2>⚠️ Safety Alerts</h2>
-            <div id="alertsContainer" class="alerts-box">
-                <p>No active alerts. Check conditions before heading out.</p>
+        <!-- Safety Alerts -->
+        <section class="info-section">
+            <h2 data-i18n="Safety Alerts">⚠️ Coastal Safety Alerts & Bulletins</h2>
+            <div id="alertsContainer" style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <p style="color: #15803d; font-weight: 600;">✅ IMD Coastal Bulletin: Normal conditions. No squally weather warning active.</p>
             </div>
         </section>
 
+        <!-- GPS Route Tracker -->
         <section class="info-section">
-            <h2>🗺️ GPS Route & Safe Zone Tracker</h2>
+            <h2 data-i18n="GPS Route & Safe Zone Tracker">🗺️ GPS Route & Safe Zone Tracker</h2>
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>📍 Current Location</h3>
-                    <p id="gpsLocation">Tracking...</p>
+                    <h3 data-i18n="Current Location">📍 Current Location</h3>
+                    <p id="gpsLocation">Press Track My Route to check harbor distance and coordinates.</p>
                 </div>
                 <div class="info-card">
-                    <h3>⚠️ Safe Zones</h3>
-                    <p id="safeZones">Loading zones...</p>
+                    <h3 data-i18n="Safe Zones">⚠️ Safe Harbor Zones</h3>
+                    <p id="safeZones">Stay within 12 nautical miles during Yellow advisory; stay in harbor during Orange/Red.</p>
                 </div>
             </div>
-            <button onclick="trackGPS()" style="margin-top: 20px;">Track My Route</button>
+            <button onclick="trackGPS()" style="margin-top: 20px; width: auto;" data-i18n="Track My Route">Track My Route</button>
         </section>
 
+        <!-- Digital Logbook -->
         <section class="info-section">
-            <h2>📖 Digital Logbook</h2>
+            <h2 data-i18n="Digital Logbook">📖 Digital Catch Logbook</h2>
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>🎣 Today's Catch</h3>
-                    <p id="todayCatch">No entries yet</p>
+                    <h3 data-i18n="Today's Catch">🎣 Today's Catch</h3>
+                    <p id="todayCatch">No entries logged today.</p>
                 </div>
                 <div class="info-card">
-                    <h3>📊 Weekly Summary</h3>
-                    <p id="weeklyCatch">Loading...</p>
+                    <h3 data-i18n="Weekly Summary">📊 Weekly Summary</h3>
+                    <p id="weeklyCatch">Loading logbook data...</p>
                 </div>
             </div>
-            <button id="addLogEntryButton" type="button" style="margin-top: 20px;">Add Entry</button>
+            <button id="addLogEntryButton" type="button" style="margin-top: 20px; width: auto;" data-i18n="Add Entry">Add Catch Entry</button>
         </section>
     </main>
 
     <script src="js/language.js"></script>
-    <script src="js/fisherman.js?v=4"></script>
+    <script src="js/fisherman.js?v=7"></script>
 </body>
 </html>

@@ -1,7 +1,10 @@
+import os
 import sqlite3
 from werkzeug.security import generate_password_hash
 
-DATABASE = "mausam.db"
+# Ensure database file is always resolved to project root
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATABASE = os.path.join(BASE_DIR, "mausam.db")
 
 
 def get_connection():

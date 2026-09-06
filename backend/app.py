@@ -1,9 +1,16 @@
+import os
+import sys
+
+# Ensure backend directory is in python search path
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import sqlite3
-import os
 import requests
 import xml.etree.ElementTree as ET
 import time
